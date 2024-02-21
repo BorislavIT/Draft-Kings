@@ -1,4 +1,4 @@
-import SearchWithResults from "@/components/SearchWithResults";
+import SearchWithResults from "@/components/Search/SearchWithResults";
 
 const Home = () => {
   return (

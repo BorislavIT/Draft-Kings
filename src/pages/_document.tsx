@@ -4,7 +4,14 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <Head></Head>
+        <Head>
+          {/* dk logo */}
+          <link
+            rel="shortcut icon"
+            href="https://d2tjpz01y5bfgl.cloudfront.net/favicon.ico"
+            data-gatsby-head="true"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />
