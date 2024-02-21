@@ -10,18 +10,18 @@ import {
 import { Dropdown } from "primereact/dropdown";
 import { useSWQuery } from "@/shared/queries";
 import { ProgressBar } from "primereact/progressbar";
+import { KEYBOARD_KEYS, SEARCH_CATEGORIES, SearchResultSet } from "./constants";
+import { useRouter } from "next/navigation";
+import { combineAllSearchResults } from "./utils";
+import { KeyboardEvent } from "react";
 import dynamic from "next/dynamic";
 import PersonSearchResult from "./Person/PersonSearchResult";
-
-const SEARCH_CATEGORIES = {
-  All: "All",
-  People: "People",
-  Planets: "Planets",
-  Starships: "Starships",
-  Vehicles: "Vehicles",
-};
+import PlanetSearchResult from "./Planet/PlanetSearchResult";
+import StarshipSearchResult from "./Starship/StarshipSearchResult";
+import VehicleSearchResult from "./Vehicle/VehicleSearchResult";
 
 const SearchWithResults = () => {
+  const router = useRouter();
   const [search, setSearch] = useQueryState("search", { defaultValue: "" });
   const [category, setCategory] = useQueryState("category", {
     defaultValue: SEARCH_CATEGORIES.All,
@@ -30,7 +30,7 @@ const SearchWithResults = () => {
   const { data: people, isLoading: isLoadingPeople } = useSWQuery<
     SearchResult<Person>
   >(
-    ["people", search],
+    ["people", search, category],
     `/people?search=${search}`,
     (category === SEARCH_CATEGORIES.All ||
       category === SEARCH_CATEGORIES.People) &&
@@ -40,7 +40,7 @@ const SearchWithResults = () => {
   const { data: planets, isLoading: isLoadingPlanets } = useSWQuery<
     SearchResult<Planet>
   >(
-    ["planet", search],
+    ["planet", search, category],
     `/planets?search=${search}`,
     (category === SEARCH_CATEGORIES.All ||
       category === SEARCH_CATEGORIES.Planets) &&
@@ -50,7 +50,7 @@ const SearchWithResults = () => {
   const { data: starships, isLoading: isLoadingStarships } = useSWQuery<
     SearchResult<Starship>
   >(
-    ["starship", search],
+    ["starship", search, category],
     `/starships?search=${search}`,
     (category === SEARCH_CATEGORIES.All ||
       category === SEARCH_CATEGORIES.Starships) &&
@@ -60,24 +60,39 @@ const SearchWithResults = () => {
   const { data: vehicles, isLoading: isLoadingVehicles } = useSWQuery<
     SearchResult<Vehicle>
   >(
-    ["vehicle", search],
+    ["vehicle", search, category],
     `/vehicles?search=${search}`,
     (category === SEARCH_CATEGORIES.All ||
       category === SEARCH_CATEGORIES.Vehicles) &&
       search !== ""
   );
 
-  const allSearchResultsCount =
-    (people?.results?.length ?? 0) +
-    (planets?.results?.length ?? 0) +
-    (starships?.results?.length ?? 0) +
-    (vehicles?.results?.length ?? 0);
+  const allSearchResults: SearchResultSet[] = combineAllSearchResults(
+    people,
+    planets,
+    starships,
+    vehicles
+  );
 
   const isLoading =
     isLoadingPeople ||
     isLoadingPlanets ||
     isLoadingStarships ||
     isLoadingVehicles;
+
+  const goToSearchResultsPage = () => {
+    router.push(`/results?search=${search}&category=${category}`);
+  };
+
+  const onSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === KEYBOARD_KEYS.ENTER) {
+      goToSearchResultsPage();
+    }
+  };
+
+  const onSearchResultClicked = (searchResult: SearchResultSet) => {
+    alert(`go to ${searchResult.resultType} details page`);
+  };
 
   return (
     <div className="flex flex-col flex-wrap gap-2 w-full">
@@ -88,32 +103,77 @@ const SearchWithResults = () => {
           onChange={(e) => setCategory(e.target.value || null)}
           options={Array.from(Object.keys(SEARCH_CATEGORIES))}
         />
-        <i className="pi pi-search cursor-pointer" />
+        <i
+          className="pi pi-search cursor-pointer"
+          onClick={goToSearchResultsPage}
+        />
         <InputText
           placeholder="Search"
           className="rounded-tl-none rounded-bl-none flex-grow w-full"
           value={search}
           onChange={(e) => setSearch(e.target.value || null)}
+          onKeyDown={onSearchKeyDown}
         />
       </div>
-      {allSearchResultsCount !== 0 && (
-        <ul className="w-full bg-white rounded flex flex-row flex-wrap">
-          {people?.results.map((person, index) => (
-            <PersonSearchResult person={person} key={index} />
-          ))}
-
-          <li
-            role="option"
-            className="w-full h-auto flex flex-row flex-nowrap cursor-pointer hover:bg-gray-100 p-2 font-bold"
-          >
-            See all results for "{search}"
-          </li>
-        </ul>
-      )}
       {isLoading && (
         <div className="w-full bg-white rounded flex flex-row flex-wrap justify-center items-center p-3">
           <ProgressBar mode="indeterminate" className="h-1 w-full" />
         </div>
+      )}
+      {search !== "" && allSearchResults.length === 0 && !isLoading && (
+        <div className="w-full bg-white rounded flex flex-row flex-wrap justify-center items-center p-3">
+          No results found for "{search}"
+        </div>
+      )}
+      {allSearchResults.length > 0 && (
+        <ul className="w-full bg-white rounded flex flex-row flex-wrap">
+          {allSearchResults?.map((result, index) => {
+            switch (result.resultType) {
+              case SEARCH_CATEGORIES.People:
+                return (
+                  <PersonSearchResult
+                    person={result as Person}
+                    key={index}
+                    onSearchResultClicked={onSearchResultClicked}
+                  />
+                );
+              case SEARCH_CATEGORIES.Planets:
+                return (
+                  <PlanetSearchResult
+                    planet={result as Planet}
+                    key={index}
+                    onSearchResultClicked={onSearchResultClicked}
+                  />
+                );
+              case SEARCH_CATEGORIES.Starships:
+                return (
+                  <StarshipSearchResult
+                    starship={result as Starship}
+                    key={index}
+                    onSearchResultClicked={onSearchResultClicked}
+                  />
+                );
+              case SEARCH_CATEGORIES.Vehicles:
+                return (
+                  <VehicleSearchResult
+                    vehicle={result as Vehicle}
+                    key={index}
+                    onSearchResultClicked={onSearchResultClicked}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
+
+          <li
+            role="option"
+            className="w-full h-auto flex flex-row flex-nowrap cursor-pointer hover:bg-gray-100 p-2 font-bold"
+            onClick={goToSearchResultsPage}
+          >
+            See all results for "{search}"
+          </li>
+        </ul>
       )}
     </div>
   );
