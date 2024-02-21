@@ -17,7 +17,8 @@ export const query = <T>(
 export const useSWQuery = <T>(
   queryKey: QueryKey,
   path: string,
-  enabled: boolean
+  enabled: boolean,
+  options = {}
 ) => {
   const { data, isLoading, error } = query<T>(
     queryKey,
@@ -26,6 +27,7 @@ export const useSWQuery = <T>(
       enabled,
       staleTime: 5 * 60 * 1000, // 5 mins
       cacheTime: 15 * 60 * 1000, // 15 mins
+      ...options,
     }
   );
 

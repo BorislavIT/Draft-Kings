@@ -1,6 +1,6 @@
 import SearchWithResults from "@/components/Search/SearchWithResults";
 
-const Home = () => {
+const HomePage = () => {
   return (
     <section className="flex justify-center items-center w-full h-full">
       <SearchWithResults />
@@ -8,4 +8,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

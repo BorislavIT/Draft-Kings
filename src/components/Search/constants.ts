@@ -14,4 +14,5 @@ export type SearchResultSet = (Person | Planet | Starship | Vehicle) & {
 
 export const KEYBOARD_KEYS = {
   ENTER: "Enter",
+  ESCAPE: "Escape",
 };

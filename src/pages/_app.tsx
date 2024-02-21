@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { AppProps } from "next/app";
 import { PrimeReactProvider } from "primereact/api";
-import { ToastProvider } from "@/contexts/ToastContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Roboto } from "next/font/google";
 import Layout from "@/components/Layout";
@@ -22,11 +21,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     <div className={roboto.className}>
       <QueryClientProvider client={queryClient}>
         <PrimeReactProvider>
-          <ToastProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ToastProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </PrimeReactProvider>
       </QueryClientProvider>
     </div>
