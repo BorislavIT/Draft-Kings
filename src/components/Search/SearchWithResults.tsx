@@ -11,9 +11,9 @@ import { Dropdown } from "primereact/dropdown";
 import { useSWQuery } from "@/shared/queries";
 import { ProgressBar } from "primereact/progressbar";
 import { KEYBOARD_KEYS, SEARCH_CATEGORIES, SearchResultSet } from "./constants";
-import { useRouter } from "next/navigation";
 import { combineAllSearchResults } from "./utils";
-import { FC, KeyboardEvent, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { FC, Fragment, KeyboardEvent, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import PersonSearchResult from "./Person/PersonSearchResult";
 import PlanetSearchResult from "./Planet/PlanetSearchResult";
@@ -79,6 +79,51 @@ const SearchWithResults: FC = () => {
     return combinedResults;
   }, [people, planets, starships, vehicles]);
 
+  const OrderedResults = () => {
+    return allSearchResults?.map((result, index) => {
+      switch (result.resultType) {
+        case SEARCH_CATEGORIES.People:
+          return (
+            <Fragment key={index}>
+              <PersonSearchResult
+                person={result as Person}
+                onSearchResultClicked={onDetailsClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Planets:
+          return (
+            <Fragment key={index}>
+              <PlanetSearchResult
+                planet={result as Planet}
+                onSearchResultClicked={onDetailsClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Starships:
+          return (
+            <Fragment key={index}>
+              <StarshipSearchResult
+                starship={result as Starship}
+                onSearchResultClicked={onDetailsClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Vehicles:
+          return (
+            <Fragment key={index}>
+              <VehicleSearchResult
+                vehicle={result as Vehicle}
+                onSearchResultClicked={onDetailsClicked}
+              />
+            </Fragment>
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
   const isLoading =
     isLoadingPeople ||
     isLoadingPlanets ||
@@ -86,6 +131,12 @@ const SearchWithResults: FC = () => {
     isLoadingVehicles;
 
   const goToSearchResultsPage = () => {
+    // this is needed, because of the bad decision to use query params for the search and category, instead of standard
+    // client side state
+    if (router.pathname === "/results") {
+      router.reload();
+      return;
+    }
     router.push(`/results?search=${search}&category=${category}`);
   };
 
@@ -98,7 +149,7 @@ const SearchWithResults: FC = () => {
     }
   };
 
-  const onSearchResultClicked = (searchResult: SearchResultSet) => {
+  const onDetailsClicked = (searchResult: SearchResultSet) => {
     alert(`go to ${searchResult.resultType} details page`);
   };
 
@@ -113,16 +164,18 @@ const SearchWithResults: FC = () => {
         />
         <i
           className="pi pi-search cursor-pointer"
-          onClick={goToSearchResultsPage}
+          onMouseDown={goToSearchResultsPage}
         />
         <InputText
           onFocus={() => {
             setShowResults(true);
           }}
           onBlur={() => {
+            // the delay here is needed, because whenever you try to click on one of the results or the "see all results"
+            // the input loses focus and the results disappear, so it stops you from clicking inside of it
             setTimeout(() => {
               setShowResults(false);
-            }, 150);
+            }, 10);
           }}
           placeholder="Search"
           className="rounded-tl-none rounded-bl-none flex-grow w-full"
@@ -143,51 +196,14 @@ const SearchWithResults: FC = () => {
                 No results found for "{search}"
               </div>
             )}
-            {allSearchResults.length > 0 && (
+            {allSearchResults.length > 0 && !isLoading && (
               <ul className="w-full bg-white rounded flex flex-row flex-wrap">
-                {allSearchResults?.map((result, index) => {
-                  switch (result.resultType) {
-                    case SEARCH_CATEGORIES.People:
-                      return (
-                        <PersonSearchResult
-                          person={result as Person}
-                          key={index}
-                          onSearchResultClicked={onSearchResultClicked}
-                        />
-                      );
-                    case SEARCH_CATEGORIES.Planets:
-                      return (
-                        <PlanetSearchResult
-                          planet={result as Planet}
-                          key={index}
-                          onSearchResultClicked={onSearchResultClicked}
-                        />
-                      );
-                    case SEARCH_CATEGORIES.Starships:
-                      return (
-                        <StarshipSearchResult
-                          starship={result as Starship}
-                          key={index}
-                          onSearchResultClicked={onSearchResultClicked}
-                        />
-                      );
-                    case SEARCH_CATEGORIES.Vehicles:
-                      return (
-                        <VehicleSearchResult
-                          vehicle={result as Vehicle}
-                          key={index}
-                          onSearchResultClicked={onSearchResultClicked}
-                        />
-                      );
-                    default:
-                      return null;
-                  }
-                })}
+                <OrderedResults />
 
                 <li
                   role="option"
                   className="w-full h-auto flex flex-row flex-nowrap cursor-pointer hover:bg-gray-100 p-2 font-bold"
-                  onClick={goToSearchResultsPage}
+                  onMouseDown={goToSearchResultsPage}
                 >
                   See all results for "{search}"
                 </li>

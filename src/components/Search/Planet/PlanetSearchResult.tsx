@@ -18,8 +18,8 @@ const PlanetSearchResult: FC<PlanetSearchResultType> = ({
   return (
     <li
       role="option"
-      className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
-      onClick={() =>
+      className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
+      onMouseDown={() =>
         onSearchResultClicked({
           ...planet,
           resultType: SEARCH_CATEGORIES.Planets,
@@ -38,7 +38,7 @@ const PlanetSearchResult: FC<PlanetSearchResultType> = ({
       <section className="w-full flex flex-row flex-nowrap">
         <div className="w-full basic-info flex flex-row flex-wrap">
           <div className="w-full">
-            <div className="max-w-[90%] text-ellipsis whitespace-nowrap overflow-hidden flex-shrink-0">
+            <div className="max-w-[calc(100%-80px)] text-ellipsis whitespace-nowrap overflow-hidden flex-shrink-0">
               <span className="font-bold">{name}</span>
             </div>
           </div>

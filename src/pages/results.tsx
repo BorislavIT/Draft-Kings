@@ -7,8 +7,8 @@ import {
 } from "@/shared/types";
 import { useSWQuery } from "@/shared/queries";
 import { ProgressBar } from "primereact/progressbar";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FC, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { FC, Fragment, useMemo } from "react";
 import {
   SEARCH_CATEGORIES,
   SearchResultSet,
@@ -111,10 +111,55 @@ const ResultsPage: FC = () => {
     alert(`go to ${searchResult.resultType} details page`);
   };
 
+  const OrderedResults = () => {
+    return allSearchResults?.map((result, index) => {
+      switch (result.resultType) {
+        case SEARCH_CATEGORIES.People:
+          return (
+            <Fragment key={index}>
+              <PersonSearchResult
+                person={result as Person}
+                onSearchResultClicked={onSearchResultClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Planets:
+          return (
+            <Fragment key={index}>
+              <PlanetSearchResult
+                planet={result as Planet}
+                onSearchResultClicked={onSearchResultClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Starships:
+          return (
+            <Fragment key={index}>
+              <StarshipSearchResult
+                starship={result as Starship}
+                onSearchResultClicked={onSearchResultClicked}
+              />
+            </Fragment>
+          );
+        case SEARCH_CATEGORIES.Vehicles:
+          return (
+            <Fragment key={index}>
+              <VehicleSearchResult
+                vehicle={result as Vehicle}
+                onSearchResultClicked={onSearchResultClicked}
+              />
+            </Fragment>
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
   return (
-    <section className="w-full h-full flex flex-col flex-wrap">
+    <section className="w-full h-full flex flex-col flex-wrap gap-16">
       <SearchWithResults />
-      <div className="flex flex-col flex-wrap w-full mt-[500px]">
+      <div className="flex flex-col flex-wrap w-full">
         {isLoading && (
           <div className="w-full bg-white rounded flex flex-row flex-wrap justify-center items-center p-3">
             <ProgressBar mode="indeterminate" className="h-1 w-full" />
@@ -125,46 +170,9 @@ const ResultsPage: FC = () => {
             No results found for "{search}"
           </div>
         )}
-        {allSearchResults.length > 0 && (
+        {allSearchResults.length > 0 && !isLoading && (
           <ul className="w-full bg-white rounded flex flex-row flex-wrap">
-            {allSearchResults?.map((result, index) => {
-              switch (result.resultType) {
-                case SEARCH_CATEGORIES.People:
-                  return (
-                    <PersonSearchResult
-                      person={result as Person}
-                      key={index}
-                      onSearchResultClicked={onSearchResultClicked}
-                    />
-                  );
-                case SEARCH_CATEGORIES.Planets:
-                  return (
-                    <PlanetSearchResult
-                      planet={result as Planet}
-                      key={index}
-                      onSearchResultClicked={onSearchResultClicked}
-                    />
-                  );
-                case SEARCH_CATEGORIES.Starships:
-                  return (
-                    <StarshipSearchResult
-                      starship={result as Starship}
-                      key={index}
-                      onSearchResultClicked={onSearchResultClicked}
-                    />
-                  );
-                case SEARCH_CATEGORIES.Vehicles:
-                  return (
-                    <VehicleSearchResult
-                      vehicle={result as Vehicle}
-                      key={index}
-                      onSearchResultClicked={onSearchResultClicked}
-                    />
-                  );
-                default:
-                  return null;
-              }
-            })}
+            {<OrderedResults />}
           </ul>
         )}
       </div>

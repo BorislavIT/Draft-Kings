@@ -16,3 +16,5 @@ export const KEYBOARD_KEYS = {
   ENTER: "Enter",
   ESCAPE: "Escape",
 };
+
+export const MAX_SEARCH_RESULTS = 6;
