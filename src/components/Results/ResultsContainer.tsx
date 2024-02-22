@@ -538,6 +538,42 @@ const ResultsContainer: FC = () => {
     );
   }
 
+  // we need to limit the results additionally, because sometimes
+  // some older request takes more time than the current one and the older ones get pushed on top
+  // so we'd have more than max visible
+
+  // the real solution to this would be to abort older requests the moment a new one is made
+  // buuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut yeah, I feel like for the purpose of this assignment
+  // this should be enough
+  const limitedResults = (
+    resultSets: (
+      | ResultSet<Person>
+      | ResultSet<Planet>
+      | ResultSet<Starship>
+      | ResultSet<Vehicle>
+    )[]
+  ) => {
+    let totalResults = resultSets.reduce(
+      (acc, resultSet) => acc + resultSet.results.length,
+      0
+    );
+    let remainingSlots = MAX_RESULTS_PER_PAGE;
+
+    return resultSets.map((resultSet) => {
+      if (totalResults <= MAX_RESULTS_PER_PAGE) {
+        return resultSet;
+      }
+
+      const maxPerCategory = Math.floor(
+        remainingSlots / resultSets.filter((rs) => rs.results.length > 0).length
+      );
+      const limitedResults = resultSet.results.slice(0, maxPerCategory);
+      remainingSlots -= limitedResults.length;
+
+      return { ...resultSet, results: limitedResults };
+    });
+  };
+
   return (
     <div className="w-full mt-16 flex flex-row flex-wrap rounded">
       <h1 className="text-center text-white w-full text-5xl mb-2">
@@ -564,7 +600,7 @@ const ResultsContainer: FC = () => {
       {!isLoading && (
         <div className="flex flex-col flex-wrap w-full">
           <ul className="w-full flex flex-row flex-wrap">
-            {allVisibleEntities.map((resultSet, index) => {
+            {limitedResults(allVisibleEntities).map((resultSet, index) => {
               resultSet.results = resultSet.results.slice(
                 0,
                 MAX_RESULTS_PER_PAGE

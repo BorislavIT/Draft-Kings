@@ -72,7 +72,8 @@ const Pagination: FC<PaginationProps> = ({ totalPages }) => {
               <li
                 key={index}
                 className={`border border-solid border-gray-200 hover:bg-gray-200 p-3 cursor-pointer bg-white text-black flex justify-center items-center font-bold ${
-                  parseInt(page) === pageIndex && "text-[#1d4ed8] bg-[#eff6ff]"
+                  parseInt(page) === pageIndex &&
+                  "!text-[#1d4ed8] !bg-[#eff6ff]"
                 }`}
                 onClick={() => onNewPageClicked(pageIndex, totalPages, setPage)}
               >
