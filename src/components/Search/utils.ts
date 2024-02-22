@@ -18,6 +18,8 @@ import { useSWQuery } from "@/shared/queries";
 import { useSearchParams } from "next/navigation";
 import { PAGE_QUERY_PARAM } from "../Results/constants";
 import { NextRouter } from "next/router";
+import { DETAILS_CATEGORY_QUERY_PARAM } from "../Details/constants";
+import { compareToLowerStrings } from "@/shared/utils";
 
 export const combineAllSearchResults = (
   people?: SearchResult<Person>,
@@ -80,14 +82,21 @@ export const usePeople = () => {
   const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryPeople = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.People
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const { data: people, isLoading: isLoadingPeople } = useSWQuery<
     SearchResult<Person>
   >(
     ["people", search, category, defaultSearchPage],
     `/people?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${defaultSearchPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.People) &&
-      !isSearchEmpty
+    (isCurrentCategoryPeople || isCurrentCategoryAll) && !isSearchEmpty
   );
 
   return { people, isLoadingPeople };
@@ -99,14 +108,21 @@ export const usePlanets = () => {
   const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryPlanets = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Planets
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const { data: planets, isLoading: isLoadingPlanets } = useSWQuery<
     SearchResult<Planet>
   >(
     ["planet", search, category, defaultSearchPage],
     `/planets?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${defaultSearchPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Planets) &&
-      !isSearchEmpty
+    (isCurrentCategoryPlanets || isCurrentCategoryAll) && !isSearchEmpty
   );
 
   return { planets, isLoadingPlanets };
@@ -118,14 +134,21 @@ export const useStarships = () => {
   const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryStarships = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Starships
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const { data: starships, isLoading: isLoadingStarships } = useSWQuery<
     SearchResult<Starship>
   >(
     ["starships", search, category, defaultSearchPage],
     `/starships?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${defaultSearchPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Starships) &&
-      !isSearchEmpty
+    (isCurrentCategoryStarships || isCurrentCategoryAll) && !isSearchEmpty
   );
 
   return { starships, isLoadingStarships };
@@ -137,14 +160,21 @@ export const useVehicles = () => {
   const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryVehicles = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Vehicles
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const { data: vehicles, isLoading: isLoadingVehicles } = useSWQuery<
     SearchResult<Vehicle>
   >(
     ["vehicle", search, category, defaultSearchPage],
     `/vehicles?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${defaultSearchPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Vehicles) &&
-      !isSearchEmpty
+    (isCurrentCategoryVehicles || isCurrentCategoryAll) && !isSearchEmpty
   );
 
   return { vehicles, isLoadingVehicles };
@@ -156,5 +186,7 @@ export const onDetailsClicked = (
 ) => {
   const urlArgs = searchResult.url.split("/");
   const id = urlArgs[urlArgs.length - 2];
-  router.push(`/urlArgs/${id}`);
+  router.push(
+    `/details/${id}?${DETAILS_CATEGORY_QUERY_PARAM}=${searchResult.resultType}`
+  );
 };

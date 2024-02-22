@@ -18,6 +18,7 @@ import {
   RESULTS_SEARCH_QUERY_PARAM,
 } from "./constants";
 import { useSearchParams } from "next/navigation";
+import { compareToLowerStrings } from "@/shared/utils";
 
 export const usePaginatedPeople = (peoplePage: number) => {
   const searchParams = useSearchParams()!;
@@ -26,6 +27,15 @@ export const usePaginatedPeople = (peoplePage: number) => {
     searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryPeople = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.People
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const {
     data: people,
     isLoading: isLoadingPeople,
@@ -33,8 +43,7 @@ export const usePaginatedPeople = (peoplePage: number) => {
   } = useSWQuery<SearchResult<Person>>(
     ["people", search, category, peoplePage],
     `/people?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${peoplePage}`,
-    (category === SEARCH_CATEGORIES.People ||
-      category === SEARCH_CATEGORIES.All) &&
+    (isCurrentCategoryPeople || isCurrentCategoryAll) &&
       !isSearchEmpty &&
       peoplePage > 0
   );
@@ -49,6 +58,15 @@ export const usePaginatedPlanets = (planetsPage: number) => {
     searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryPlanets = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Planets
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const {
     data: planets,
     isLoading: isLoadingPlanets,
@@ -56,8 +74,7 @@ export const usePaginatedPlanets = (planetsPage: number) => {
   } = useSWQuery<SearchResult<Planet>>(
     ["planet", search, category, planetsPage],
     `/planets?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${planetsPage}`,
-    (category === SEARCH_CATEGORIES.Planets ||
-      category === SEARCH_CATEGORIES.All) &&
+    (isCurrentCategoryPlanets || isCurrentCategoryAll) &&
       !isSearchEmpty &&
       planetsPage > 0
   );
@@ -72,6 +89,15 @@ export const usePaginatedStarships = (starshipsPage: number) => {
     searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryStarships = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Starships
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const {
     data: starships,
     isLoading: isLoadingStarships,
@@ -79,8 +105,7 @@ export const usePaginatedStarships = (starshipsPage: number) => {
   } = useSWQuery<SearchResult<Starship>>(
     ["starships", search, category, starshipsPage],
     `/starships?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${starshipsPage}`,
-    (category === SEARCH_CATEGORIES.Starships ||
-      category === SEARCH_CATEGORIES.All) &&
+    (isCurrentCategoryStarships || isCurrentCategoryAll) &&
       !isSearchEmpty &&
       starshipsPage > 0
   );
@@ -95,6 +120,15 @@ export const usePaginatedVehicles = (vehiclesPage: number) => {
     searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isSearchEmpty = search === DEFAULT_SEARCH;
 
+  const isCurrentCategoryVehicles = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Vehicles
+  );
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+
   const {
     data: vehicles,
     isLoading: isLoadingVehicles,
@@ -102,8 +136,7 @@ export const usePaginatedVehicles = (vehiclesPage: number) => {
   } = useSWQuery<SearchResult<Vehicle>>(
     ["vehicle", search, category, vehiclesPage],
     `/vehicles?${SEARCH_QUERY_PARAM}=${search}&${PAGE_QUERY_PARAM}=${vehiclesPage}`,
-    (category === SEARCH_CATEGORIES.Vehicles ||
-      category === SEARCH_CATEGORIES.All) &&
+    (isCurrentCategoryVehicles || isCurrentCategoryAll) &&
       !isSearchEmpty &&
       vehiclesPage > 0
   );

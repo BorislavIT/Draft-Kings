@@ -18,6 +18,7 @@ import {
   usePaginatedStarships,
   usePaginatedVehicles,
 } from "./utilts";
+import { compareToLowerStrings } from "@/shared/utils";
 
 const ResultsContainer: FC = () => {
   const { page } = usePagination();
@@ -47,11 +48,26 @@ const ResultsContainer: FC = () => {
   const searchParams = useSearchParams()!;
   const category =
     searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
-  const isCurrentCategoryAll = category === SEARCH_CATEGORIES.All;
-  const isCurrentCategoryPeople = category === SEARCH_CATEGORIES.People;
-  const isCurrentCategoryPlanets = category === SEARCH_CATEGORIES.Planets;
-  const isCurrentCategoryStarships = category === SEARCH_CATEGORIES.Starships;
-  const isCurrentCategoryVehicles = category === SEARCH_CATEGORIES.Vehicles;
+  const isCurrentCategoryAll = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.All
+  );
+  const isCurrentCategoryPeople = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.People
+  );
+  const isCurrentCategoryPlanets = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Planets
+  );
+  const isCurrentCategoryStarships = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Starships
+  );
+  const isCurrentCategoryVehicles = compareToLowerStrings(
+    category,
+    SEARCH_CATEGORIES.Vehicles
+  );
 
   const { people, isLoadingPeople, peopleError } =
     usePaginatedPeople(peoplePage);
@@ -185,14 +201,22 @@ const ResultsContainer: FC = () => {
       const resultsRangeEndIndex =
         resultsRangeStartIndex + entityResultsShowCount - 1;
 
-      const isCurrentEntityPeople =
-        entity.resultType === SEARCH_CATEGORIES.People;
-      const isCurrentEntityPlanets =
-        entity.resultType === SEARCH_CATEGORIES.Planets;
-      const isCurrentEntityStarships =
-        entity.resultType === SEARCH_CATEGORIES.Starships;
-      const isCurrentEntityVehicles =
-        entity.resultType === SEARCH_CATEGORIES.Vehicles;
+      const isCurrentEntityPeople = compareToLowerStrings(
+        entity.resultType,
+        SEARCH_CATEGORIES.People
+      );
+      const isCurrentEntityPlanets = compareToLowerStrings(
+        entity.resultType,
+        SEARCH_CATEGORIES.Planets
+      );
+      const isCurrentEntityStarships = compareToLowerStrings(
+        entity.resultType,
+        SEARCH_CATEGORIES.Starships
+      );
+      const isCurrentEntityVehicles = compareToLowerStrings(
+        entity.resultType,
+        SEARCH_CATEGORIES.Vehicles
+      );
 
       // we need to update the start index (or end index, doesn't matter)
       // so that our useeffect below will catch this
@@ -548,18 +572,30 @@ const ResultsContainer: FC = () => {
 
               return (
                 <Fragment key={index}>
-                  {resultSet.resultType === SEARCH_CATEGORIES.People && (
+                  {compareToLowerStrings(
+                    resultSet.resultType,
+                    SEARCH_CATEGORIES.People
+                  ) && (
                     <PersonResults people={resultSet?.results as Person[]} />
                   )}
-                  {resultSet.resultType === SEARCH_CATEGORIES.Planets && (
+                  {compareToLowerStrings(
+                    resultSet.resultType,
+                    SEARCH_CATEGORIES.Planets
+                  ) && (
                     <PlanetResults planets={resultSet?.results as Planet[]} />
                   )}
-                  {resultSet.resultType === SEARCH_CATEGORIES.Starships && (
+                  {compareToLowerStrings(
+                    resultSet.resultType,
+                    SEARCH_CATEGORIES.Starships
+                  ) && (
                     <StarshipResults
                       starships={resultSet?.results as Starship[]}
                     />
                   )}
-                  {resultSet.resultType === SEARCH_CATEGORIES.Vehicles && (
+                  {compareToLowerStrings(
+                    resultSet.resultType,
+                    SEARCH_CATEGORIES.Vehicles
+                  ) && (
                     <VehicleResults
                       vehicles={resultSet?.results as Vehicle[]}
                     />

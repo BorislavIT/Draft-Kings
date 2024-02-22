@@ -1,7 +1,7 @@
 import { useQuery, QueryFunction, QueryKey } from "@tanstack/react-query";
 import swapiClient from "./swapiClient";
 
-export const query = <T>(
+export const useDKQuery = <T>(
   key: QueryKey,
   queryFunction: QueryFunction<T>,
   options = {}
@@ -20,7 +20,7 @@ export const useSWQuery = <T>(
   enabled: boolean,
   options = {}
 ) => {
-  const { data, isLoading, error } = query<T>(
+  const { data, isLoading, error } = useDKQuery<T>(
     queryKey,
     () => swapiClient.get(path).then((res) => res.data),
     {
