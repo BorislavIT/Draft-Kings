@@ -33,14 +33,13 @@ export const usePagination = () => {
   };
 };
 
-const Pagination: FC<{
+type PaginationProps = {
   totalPages: number;
-  setPage: (newPage: string) => void;
-  onNewPageClicked: (
-    newPage: number,
-    setPage: (newPage: string) => void
-  ) => void;
-}> = ({ totalPages, setPage, onNewPageClicked }) => {
+};
+
+const Pagination: FC<PaginationProps> = ({ totalPages }) => {
+  const { page, setPage, onNewPageClicked } = usePagination();
+
   return (
     <ul className="pagination flex flex-row flex-nowrap justify-end w-full text-white mt-4 h-12">
       {Array.from({
@@ -48,7 +47,9 @@ const Pagination: FC<{
       }).map((_, index) => (
         <li
           key={index}
-          className="border border-solid border-gray-200 hover:bg-gray-200 p-3 cursor-pointer bg-white text-black flex justify-center items-center"
+          className={`border border-solid border-gray-200 hover:bg-gray-200 p-3 cursor-pointer bg-white text-black flex justify-center items-center ${
+            parseInt(page) === index + 1 && "text-[#1d4ed8] bg-[#eff6ff]"
+          }`}
           onClick={() => onNewPageClicked(index + 1, setPage)}
         >
           {index + 1}

@@ -2,20 +2,19 @@
 import { Person, Planet } from "@/shared/types";
 import { FC } from "react";
 import { useSWQuery } from "@/shared/queries";
-import { SEARCH_CATEGORIES, SearchResultSet } from "../constants";
+import { onDetailsClicked } from "../utils";
+import { SEARCH_CATEGORIES } from "../constants";
 import yoda from "../../../../public/images/yoda.jpg";
 import Image from "next/image";
 import FilmSearchResult from "../Film/FilmSearchResult";
 
 type PersonSearchResultProps = {
   person: Person;
-  onSearchResultClicked: (searchResult: SearchResultSet) => void;
 };
 
 const PersonSearchResult: FC<PersonSearchResultProps> = ({
   person,
   person: { homeworld, name, birth_year, films },
-  onSearchResultClicked,
 }) => {
   const homeworldUrlArgs = homeworld.split("/");
   const homeworldId = homeworldUrlArgs[homeworldUrlArgs.length - 2];
@@ -29,9 +28,10 @@ const PersonSearchResult: FC<PersonSearchResultProps> = ({
   return (
     <li
       role="option"
+      aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onSearchResultClicked({
+        onDetailsClicked({
           ...person,
           resultType: SEARCH_CATEGORIES.People,
         })

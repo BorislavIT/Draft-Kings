@@ -21,7 +21,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             }}
           ></div>
           <div className="bg-overlay fixed inset-0 bg-black bg-opacity-70 z-[-1]"></div>
-          <MainPage children={children} />
+          <MainPage>{children}</MainPage>
         </div>
       </div>
     </>

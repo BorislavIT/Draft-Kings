@@ -1,14 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import { useQueryState } from "nuqs";
-import {
-  Person,
-  Planet,
-  SearchResult,
-  Starship,
-  Vehicle,
-} from "@/shared/types";
+import { Person, Planet, Starship, Vehicle } from "@/shared/types";
 import { Dropdown } from "primereact/dropdown";
-import { useSWQuery } from "@/shared/queries";
 import { ProgressBar } from "primereact/progressbar";
 import {
   CATEGORY_QUERY_PARAM,
@@ -68,37 +61,25 @@ const SearchWithResults: FC = () => {
         case SEARCH_CATEGORIES.People:
           return (
             <Fragment key={index}>
-              <PersonSearchResult
-                person={result as Person}
-                onSearchResultClicked={onDetailsClicked}
-              />
+              <PersonSearchResult person={result as Person} />
             </Fragment>
           );
         case SEARCH_CATEGORIES.Planets:
           return (
             <Fragment key={index}>
-              <PlanetSearchResult
-                planet={result as Planet}
-                onSearchResultClicked={onDetailsClicked}
-              />
+              <PlanetSearchResult planet={result as Planet} />
             </Fragment>
           );
         case SEARCH_CATEGORIES.Starships:
           return (
             <Fragment key={index}>
-              <StarshipSearchResult
-                starship={result as Starship}
-                onSearchResultClicked={onDetailsClicked}
-              />
+              <StarshipSearchResult starship={result as Starship} />
             </Fragment>
           );
         case SEARCH_CATEGORIES.Vehicles:
           return (
             <Fragment key={index}>
-              <VehicleSearchResult
-                vehicle={result as Vehicle}
-                onSearchResultClicked={onDetailsClicked}
-              />
+              <VehicleSearchResult vehicle={result as Vehicle} />
             </Fragment>
           );
         default:
@@ -136,10 +117,6 @@ const SearchWithResults: FC = () => {
       setShowResults(false);
       (document.activeElement as HTMLElement)?.blur();
     }
-  };
-
-  const onDetailsClicked = (searchResult: SearchResultSet) => {
-    alert(`go to ${searchResult.resultType} details page`);
   };
 
   return (
@@ -182,7 +159,7 @@ const SearchWithResults: FC = () => {
             )}
             {search !== "" && allSearchResults.length === 0 && !isLoading && (
               <div className="w-full bg-white rounded flex flex-row flex-nowrap justify-center items-center p-3">
-                No results found for "{search}"
+                No results found for &quot;{search}&quot;
               </div>
             )}
             {allSearchResults.length > 0 && !isLoading && (
@@ -190,11 +167,12 @@ const SearchWithResults: FC = () => {
                 <OrderedResults />
 
                 <li
+                  aria-selected="false"
                   role="option"
                   className="w-full h-auto flex flex-row flex-nowrap cursor-pointer hover:bg-gray-100 p-2 font-bold"
                   onMouseDown={goToSearchResultsPage}
                 >
-                  See all results for "{search}"
+                  See all results for &quot;{search}&quot;
                 </li>
               </ul>
             )}

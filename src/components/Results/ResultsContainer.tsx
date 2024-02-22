@@ -52,37 +52,41 @@ const ResultsContainer: FC = () => {
   const isCurrentCategoryStarships = category === SEARCH_CATEGORIES.Starships;
   const isCurrentCategoryVehicles = category === SEARCH_CATEGORIES.Vehicles;
 
-  const { people, isLoadingPeople } = usePaginatedPeople(peoplePage);
+  const { people, isLoadingPeople, peopleError } =
+    usePaginatedPeople(peoplePage);
 
-  const { people: extraPeople, isLoadingPeople: isLoadingExtraPeople } =
-    usePaginatedPeople(extraPeoplePage);
+  const {
+    people: extraPeople,
+    isLoadingPeople: isLoadingExtraPeople,
+    peopleError: extraPeopleError,
+  } = usePaginatedPeople(extraPeoplePage);
 
-  const { planets, isLoadingPlanets } = usePaginatedPlanets(planetsPage);
+  const { planets, isLoadingPlanets, planetsError } =
+    usePaginatedPlanets(planetsPage);
 
-  const { planets: extraPlanets, isLoadingPlanets: isLoadingExtraPlanets } =
-    usePaginatedPlanets(extraPlanetsPage);
+  const {
+    planets: extraPlanets,
+    isLoadingPlanets: isLoadingExtraPlanets,
+    planetsError: extraPlanetsError,
+  } = usePaginatedPlanets(extraPlanetsPage);
 
-  const { starships, isLoadingStarships } =
+  const { starships, isLoadingStarships, starshipsError } =
     usePaginatedStarships(starshipsPage);
 
   const {
     starships: extraStarships,
     isLoadingStarships: isLoadingExtraStarships,
-  } = usePaginatedStarships(
-    extraStarshipsPage,
-    isCurrentCategoryAll || isCurrentCategoryStarships
-  );
+    starshipsError: extraStarshipsError,
+  } = usePaginatedStarships(extraStarshipsPage);
 
-  const { vehicles, isLoadingVehicles } = usePaginatedVehicles(
-    vehiclesPage,
-    isCurrentCategoryAll || isCurrentCategoryVehicles
-  );
+  const { vehicles, isLoadingVehicles, vehiclesError } =
+    usePaginatedVehicles(vehiclesPage);
 
-  const { vehicles: extraVehicles, isLoadingVehicles: isLoadingExtraVehicles } =
-    usePaginatedVehicles(
-      extraVehiclesPage,
-      isCurrentCategoryAll || isCurrentCategoryVehicles
-    );
+  const {
+    vehicles: extraVehicles,
+    isLoadingVehicles: isLoadingExtraVehicles,
+    vehiclesError: extraVehiclesError,
+  } = usePaginatedVehicles(extraVehiclesPage);
 
   const [allVisibleEntities, setAllVisibleEntities] = useState<
     (
@@ -391,6 +395,14 @@ const ResultsContainer: FC = () => {
     setAllVisibleEntities(entities.filter((e) => e.results.length > 0));
   }, [
     page,
+    people,
+    planets,
+    starships,
+    vehicles,
+    peoplePage,
+    planetsPage,
+    starshipsPage,
+    vehiclesPage,
     people?.results,
     planets?.results,
     starships?.results,
@@ -399,6 +411,11 @@ const ResultsContainer: FC = () => {
     extraPlanets?.results,
     extraStarships?.results,
     extraVehicles?.results,
+    isCurrentCategoryAll,
+    isCurrentCategoryPeople,
+    isCurrentCategoryPlanets,
+    isCurrentCategoryStarships,
+    isCurrentCategoryVehicles,
   ]);
 
   useEffect(() => {
@@ -447,6 +464,10 @@ const ResultsContainer: FC = () => {
     if (isCurrentCategoryStarships && totalStarships !== null) {
       setTotalEntities(totalStarships);
     }
+
+    if (isCurrentCategoryVehicles && totalVehicles !== null) {
+      setTotalEntities(totalVehicles);
+    }
   }, [
     people?.count,
     planets?.count,
@@ -474,8 +495,29 @@ const ResultsContainer: FC = () => {
     isLoadingExtraStarships ||
     isLoadingExtraVehicles;
 
+  const anyErrors =
+    peopleError ||
+    planetsError ||
+    starshipsError ||
+    vehiclesError ||
+    extraPeopleError ||
+    extraPlanetsError ||
+    extraStarshipsError ||
+    extraVehiclesError;
+
+  if (anyErrors) {
+    return (
+      <div className="text-red-500 text-3xl text-center">
+        BIG ERROR, BUT NO DETAILS ;)
+      </div>
+    );
+  }
+
   return (
     <div className="w-full mt-16 flex flex-row flex-wrap rounded">
+      <h1 className="text-center text-white w-full text-5xl mb-2">
+        Search results
+      </h1>
       {isLoading && (
         <div className="results skeleton flex flex-col flex-wrap w-full rounded">
           <ul className="w-full rounded flex flex-row flex-wrap">
@@ -529,8 +571,6 @@ const ResultsContainer: FC = () => {
       )}
       <Pagination
         totalPages={Math.ceil(totalEntities / MAX_RESULTS_PER_PAGE)}
-        setPage={setPage}
-        onNewPageClicked={onNewPageClicked}
       />
     </div>
   );

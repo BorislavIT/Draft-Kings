@@ -1,26 +1,26 @@
 "use client";
 import { Starship } from "@/shared/types";
 import { FC } from "react";
-import { SEARCH_CATEGORIES, SearchResultSet } from "../constants";
+import { onDetailsClicked } from "../utils";
+import { SEARCH_CATEGORIES } from "../constants";
 import starshipImg from "../../../../public/images/starship.jpg";
 import Image from "next/image";
 
 type StarshipSearchResultType = {
   starship: Starship;
-  onSearchResultClicked: (searchResult: SearchResultSet) => void;
 };
 
 const StarshipSearchResult: FC<StarshipSearchResultType> = ({
   starship,
   starship: { name, model },
-  onSearchResultClicked,
 }) => {
   return (
     <li
       role="option"
+      aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onSearchResultClicked({
+        onDetailsClicked({
           ...starship,
           resultType: SEARCH_CATEGORIES.Starships,
         })

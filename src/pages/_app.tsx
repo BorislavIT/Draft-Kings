@@ -18,10 +18,13 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
+// setting retry to false, because I want to
+// show that i'm handling in case of an error ;)
+// because otherwise while its getting SSR, it will keep retrying and it will look a bit weird
 const queryClientConfig: QueryClientConfig = {
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      retry: false,
     },
   },
 };

@@ -146,3 +146,7 @@ export const useVehicles = () => {
 
   return { vehicles, isLoadingVehicles };
 };
+
+export const onDetailsClicked = (searchResult: SearchResultSet) => {
+  alert(`go to ${searchResult.resultType} details page`);
+};

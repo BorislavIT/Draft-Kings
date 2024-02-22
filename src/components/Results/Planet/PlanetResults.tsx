@@ -1,5 +1,6 @@
+import PlanetSearchResult from "@/components/Search/Planet/PlanetSearchResult";
 import { Planet } from "@/shared/types";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 
 type PlanetResultsProps = {
   planets?: Planet[];
@@ -11,9 +12,9 @@ const PlanetResults: FC<PlanetResultsProps> = ({ planets }) => {
       <div className="flex flex-col flex-wrap w-full">
         <ul className="w-full rounded flex flex-row flex-wrap bg-white">
           {planets?.map((planet, index) => (
-            <li className="w-full h-16" key={index}>
-              {planet.name}
-            </li>
+            <Fragment key={index}>
+              <PlanetSearchResult planet={planet} />
+            </Fragment>
           ))}
         </ul>
       </div>

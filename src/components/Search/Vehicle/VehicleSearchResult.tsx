@@ -1,26 +1,26 @@
 "use client";
 import { Vehicle } from "@/shared/types";
 import { FC } from "react";
-import { SEARCH_CATEGORIES, SearchResultSet } from "../constants";
+import { onDetailsClicked } from "../utils";
+import { SEARCH_CATEGORIES } from "../constants";
 import vehicleImg from "../../../../public/images/vehicle.jpg";
 import Image from "next/image";
 
 type VehicleSearchResultType = {
   vehicle: Vehicle;
-  onSearchResultClicked: (searchResult: SearchResultSet) => void;
 };
 
 const VehicleSearchResult: FC<VehicleSearchResultType> = ({
   vehicle,
   vehicle: { name, model },
-  onSearchResultClicked,
 }) => {
   return (
     <li
       role="option"
+      aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onSearchResultClicked({
+        onDetailsClicked({
           ...vehicle,
           resultType: SEARCH_CATEGORIES.Vehicles,
         })

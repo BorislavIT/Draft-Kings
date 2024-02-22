@@ -1,5 +1,6 @@
+import StarshipSearchResult from "@/components/Search/Starship/StarshipSearchResult";
 import { Starship } from "@/shared/types";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 
 type StarshipResultsProps = {
   starships?: Starship[];
@@ -11,9 +12,9 @@ const StarshipResults: FC<StarshipResultsProps> = ({ starships }) => {
       <div className="flex flex-col flex-wrap w-full">
         <ul className="w-full rounded flex flex-row flex-wrap bg-white">
           {starships?.map((starship, index) => (
-            <li className="w-full h-16" key={index}>
-              {starship.name}
-            </li>
+            <Fragment key={index}>
+              <StarshipSearchResult starship={starship} />
+            </Fragment>
           ))}
         </ul>
       </div>

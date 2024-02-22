@@ -1,5 +1,6 @@
 import { Person } from "@/shared/types";
-import { FC } from "react";
+import { FC, Fragment } from "react";
+import PersonSearchResult from "@/components/Search/Person/PersonSearchResult";
 
 type PersonResultProps = {
   people?: Person[];
@@ -11,9 +12,9 @@ const PersonResults: FC<PersonResultProps> = ({ people }) => {
       <div className="flex flex-col flex-wrap w-full">
         <ul className="w-full rounded flex flex-row flex-wrap bg-white">
           {people?.map((person, index) => (
-            <li className="w-full h-16" key={index}>
-              {person.name}
-            </li>
+            <Fragment key={index}>
+              <PersonSearchResult person={person} />
+            </Fragment>
           ))}
         </ul>
       </div>
