@@ -33,3 +33,7 @@
 - Tailwind css - for styling
 - primereact - for a component library for dropdowns and stuff
 - jest, test-library@react and babel - for unit tests
+
+## Note
+
+- I did not make the app FULLY responsive, since I didn't consider that important, can easily do it if needed.
