@@ -22,7 +22,7 @@
     npm run dev
 ```
 
-## Client
+## Used packages and why
 
 - pnpm - because it's SUPERIOR of npm in EVERY WAY, shape and form
 - Typescript
