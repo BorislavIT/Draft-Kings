@@ -18,3 +18,6 @@ export const KEYBOARD_KEYS = {
 };
 
 export const MAX_SEARCH_RESULTS = 6;
+
+export const SEARCH_QUERY_PARAM = "search";
+export const CATEGORY_QUERY_PARAM = "category";

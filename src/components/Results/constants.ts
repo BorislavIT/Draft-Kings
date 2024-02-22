@@ -5,3 +5,7 @@ export type ResultSet<T> = {
   count: number;
   results: T[];
 };
+
+export const RESULTS_SEARCH_QUERY_PARAM = "resultsSearch";
+export const RESULTS_CATEGORY_QUERY_PARAM = "resultsCategory";
+export const PAGE_QUERY_PARAM = "page";

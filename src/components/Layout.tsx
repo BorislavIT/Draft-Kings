@@ -12,7 +12,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <div className="layout-container flex flex-column justify-center flex-wrap z-10">
         <div className="page-container flex flex-row justify-center gap-4 flex-nowrap w-full h-full px-4">
           <div
-            className="bg fixed inset-0 h-screen min-w-[1948px] w-screen"
+            className="bg fixed inset-0 min-w-[1948px] w-screen"
             style={{
               backgroundImage: `url(${bg.src})`,
               backgroundRepeat: "no-repeat",

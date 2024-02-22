@@ -1,7 +1,11 @@
 import { FC } from "react";
 import { AppProps } from "next/app";
 import { PrimeReactProvider } from "primereact/api";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientConfig,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Roboto } from "next/font/google";
 import Layout from "@/components/Layout";
 import "primeicons/primeicons.css";
@@ -14,7 +18,15 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-const queryClient = new QueryClient();
+const queryClientConfig: QueryClientConfig = {
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+};
+
+const queryClient = new QueryClient(queryClientConfig);
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (

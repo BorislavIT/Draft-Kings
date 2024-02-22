@@ -10,10 +10,26 @@ import {
 import { Dropdown } from "primereact/dropdown";
 import { useSWQuery } from "@/shared/queries";
 import { ProgressBar } from "primereact/progressbar";
-import { KEYBOARD_KEYS, SEARCH_CATEGORIES, SearchResultSet } from "./constants";
-import { combineAllSearchResults } from "./utils";
+import {
+  CATEGORY_QUERY_PARAM,
+  KEYBOARD_KEYS,
+  SEARCH_CATEGORIES,
+  SEARCH_QUERY_PARAM,
+  SearchResultSet,
+} from "./constants";
+import {
+  combineAllSearchResults,
+  usePeople,
+  usePlanets,
+  useStarships,
+  useVehicles,
+} from "./utils";
 import { useRouter } from "next/router";
 import { FC, Fragment, KeyboardEvent, useMemo, useState } from "react";
+import {
+  RESULTS_CATEGORY_QUERY_PARAM,
+  RESULTS_SEARCH_QUERY_PARAM,
+} from "../Results/constants";
 import dynamic from "next/dynamic";
 import PersonSearchResult from "./Person/PersonSearchResult";
 import PlanetSearchResult from "./Planet/PlanetSearchResult";
@@ -22,51 +38,18 @@ import VehicleSearchResult from "./Vehicle/VehicleSearchResult";
 
 const SearchWithResults: FC = () => {
   const router = useRouter();
-  const [search, setSearch] = useQueryState("search", { defaultValue: "" });
-  const [category, setCategory] = useQueryState("category", {
+  const [search, setSearch] = useQueryState(SEARCH_QUERY_PARAM, {
+    defaultValue: "",
+  });
+  const [category, setCategory] = useQueryState(CATEGORY_QUERY_PARAM, {
     defaultValue: SEARCH_CATEGORIES.All,
   });
   const [showResults, setShowResults] = useState<boolean>(false);
 
-  const { data: people, isLoading: isLoadingPeople } = useSWQuery<
-    SearchResult<Person>
-  >(
-    ["people", search, category],
-    `/people?search=${search}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.People) &&
-      search !== ""
-  );
-
-  const { data: planets, isLoading: isLoadingPlanets } = useSWQuery<
-    SearchResult<Planet>
-  >(
-    ["planet", search, category],
-    `/planets?search=${search}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Planets) &&
-      search !== ""
-  );
-
-  const { data: starships, isLoading: isLoadingStarships } = useSWQuery<
-    SearchResult<Starship>
-  >(
-    ["starship", search, category],
-    `/starships?search=${search}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Starships) &&
-      search !== ""
-  );
-
-  const { data: vehicles, isLoading: isLoadingVehicles } = useSWQuery<
-    SearchResult<Vehicle>
-  >(
-    ["vehicle", search, category],
-    `/vehicles?search=${search}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Vehicles) &&
-      search !== ""
-  );
+  const { people, isLoadingPeople } = usePeople();
+  const { planets, isLoadingPlanets } = usePlanets();
+  const { starships, isLoadingStarships } = useStarships();
+  const { vehicles, isLoadingVehicles } = useVehicles();
 
   const allSearchResults: SearchResultSet[] = useMemo(() => {
     const combinedResults = combineAllSearchResults(
@@ -134,11 +117,15 @@ const SearchWithResults: FC = () => {
     // this is needed, because of the bad decision to use query params for the search and category, instead of standard
     // client side state management
     if (router.pathname === "/results") {
-      router.reload();
+      router
+        .push(
+          `/results?${RESULTS_SEARCH_QUERY_PARAM}=${search}&${RESULTS_CATEGORY_QUERY_PARAM}=${category}&${CATEGORY_QUERY_PARAM}=${category}&${SEARCH_QUERY_PARAM}=${search}`
+        )
+        .then(() => router.reload());
       return;
     }
     router.push(
-      `/results?resultsSearch=${search}&resultsCategory=${category}&category=${category}&search=${search}`
+      `/results?${RESULTS_SEARCH_QUERY_PARAM}=${search}&${RESULTS_CATEGORY_QUERY_PARAM}=${category}&${CATEGORY_QUERY_PARAM}=${category}&${SEARCH_QUERY_PARAM}=${search}`
     );
   };
 
