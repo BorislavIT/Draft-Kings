@@ -1,6 +1,7 @@
 "use client";
 import { Planet } from "@/shared/types";
 import { FC } from "react";
+import { useRouter } from "next/router";
 import { onDetailsClicked } from "../utils";
 import { SEARCH_CATEGORIES } from "../constants";
 import planetImg from "../../../../public/images/planet.jpg";
@@ -14,16 +15,21 @@ const PlanetSearchResult: FC<PlanetSearchResultType> = ({
   planet,
   planet: { name, diameter },
 }) => {
+  const router = useRouter();
+
   return (
     <li
       role="option"
       aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onDetailsClicked({
-          ...planet,
-          resultType: SEARCH_CATEGORIES.Planets,
-        })
+        onDetailsClicked(
+          {
+            ...planet,
+            resultType: SEARCH_CATEGORIES.Planets,
+          },
+          router
+        )
       }
     >
       <section className="img-container flex-shrink-0">

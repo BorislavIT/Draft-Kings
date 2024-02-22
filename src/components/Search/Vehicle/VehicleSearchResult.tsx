@@ -2,6 +2,7 @@
 import { Vehicle } from "@/shared/types";
 import { FC } from "react";
 import { onDetailsClicked } from "../utils";
+import { useRouter } from "next/router";
 import { SEARCH_CATEGORIES } from "../constants";
 import vehicleImg from "../../../../public/images/vehicle.jpg";
 import Image from "next/image";
@@ -14,16 +15,21 @@ const VehicleSearchResult: FC<VehicleSearchResultType> = ({
   vehicle,
   vehicle: { name, model },
 }) => {
+  const router = useRouter();
+
   return (
     <li
       role="option"
       aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onDetailsClicked({
-          ...vehicle,
-          resultType: SEARCH_CATEGORIES.Vehicles,
-        })
+        onDetailsClicked(
+          {
+            ...vehicle,
+            resultType: SEARCH_CATEGORIES.Vehicles,
+          },
+          router
+        )
       }
     >
       <section className="img-container flex-shrink-0">

@@ -6,7 +6,12 @@ import {
   Starship,
   Vehicle,
 } from "@/shared/types";
-import { SEARCH_CATEGORIES, SEARCH_QUERY_PARAM } from "../Search/constants";
+import {
+  DEFAULT_CATEGORY,
+  DEFAULT_SEARCH,
+  SEARCH_CATEGORIES,
+  SEARCH_QUERY_PARAM,
+} from "../Search/constants";
 import {
   PAGE_QUERY_PARAM,
   RESULTS_CATEGORY_QUERY_PARAM,
@@ -16,9 +21,10 @@ import { useSearchParams } from "next/navigation";
 
 export const usePaginatedPeople = (peoplePage: number) => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? "";
-  const category = searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? "";
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category =
+    searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const {
     data: people,
@@ -38,9 +44,10 @@ export const usePaginatedPeople = (peoplePage: number) => {
 
 export const usePaginatedPlanets = (planetsPage: number) => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? "";
-  const category = searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? "";
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category =
+    searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const {
     data: planets,
@@ -60,9 +67,10 @@ export const usePaginatedPlanets = (planetsPage: number) => {
 
 export const usePaginatedStarships = (starshipsPage: number) => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? "";
-  const category = searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? "";
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category =
+    searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const {
     data: starships,
@@ -82,9 +90,10 @@ export const usePaginatedStarships = (starshipsPage: number) => {
 
 export const usePaginatedVehicles = (vehiclesPage: number) => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? "";
-  const category = searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? "";
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(RESULTS_SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category =
+    searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const {
     data: vehicles,

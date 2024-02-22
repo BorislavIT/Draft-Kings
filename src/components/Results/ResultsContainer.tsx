@@ -1,7 +1,7 @@
 import { Person, Planet, Starship, Vehicle } from "@/shared/types";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, Fragment, FC } from "react";
-import { SEARCH_CATEGORIES } from "../Search/constants";
+import { DEFAULT_CATEGORY, SEARCH_CATEGORIES } from "../Search/constants";
 import {
   ResultSet,
   MAX_RESULTS_PER_PAGE,
@@ -20,7 +20,7 @@ import {
 } from "./utilts";
 
 const ResultsContainer: FC = () => {
-  const { page, setPage, onNewPageClicked } = usePagination();
+  const { page } = usePagination();
 
   const [peoplePage, setPeoplePage] = useState<number>(1);
   const [planetsPage, setPlanetsPage] = useState<number>(1);
@@ -45,7 +45,8 @@ const ResultsContainer: FC = () => {
     useState<number>(-1);
 
   const searchParams = useSearchParams()!;
-  const category = searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? "";
+  const category =
+    searchParams.get(RESULTS_CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
   const isCurrentCategoryAll = category === SEARCH_CATEGORIES.All;
   const isCurrentCategoryPeople = category === SEARCH_CATEGORIES.People;
   const isCurrentCategoryPlanets = category === SEARCH_CATEGORIES.Planets;

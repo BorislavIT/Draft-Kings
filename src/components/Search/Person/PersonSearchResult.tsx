@@ -2,6 +2,7 @@
 import { Person, Planet } from "@/shared/types";
 import { FC } from "react";
 import { useSWQuery } from "@/shared/queries";
+import { useRouter } from "next/router";
 import { onDetailsClicked } from "../utils";
 import { SEARCH_CATEGORIES } from "../constants";
 import yoda from "../../../../public/images/yoda.jpg";
@@ -16,6 +17,8 @@ const PersonSearchResult: FC<PersonSearchResultProps> = ({
   person,
   person: { homeworld, name, birth_year, films },
 }) => {
+  const router = useRouter();
+
   const homeworldUrlArgs = homeworld.split("/");
   const homeworldId = homeworldUrlArgs[homeworldUrlArgs.length - 2];
 
@@ -31,10 +34,13 @@ const PersonSearchResult: FC<PersonSearchResultProps> = ({
       aria-selected="false"
       className="w-full h-16 flex flex-row flex-nowrap gap-2 pb-2 border-b-2 last:border-none border-gray-200 cursor-pointer hover:bg-gray-100 p-2"
       onMouseDown={() =>
-        onDetailsClicked({
-          ...person,
-          resultType: SEARCH_CATEGORIES.People,
-        })
+        onDetailsClicked(
+          {
+            ...person,
+            resultType: SEARCH_CATEGORIES.People,
+          },
+          router
+        )
       }
     >
       <section className="img-container flex-shrink-0">

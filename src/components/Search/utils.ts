@@ -11,10 +11,13 @@ import {
   MAX_SEARCH_RESULTS,
   CATEGORY_QUERY_PARAM,
   SEARCH_QUERY_PARAM,
+  DEFAULT_CATEGORY,
+  DEFAULT_SEARCH,
 } from "./constants";
 import { useSWQuery } from "@/shared/queries";
 import { useSearchParams } from "next/navigation";
 import { PAGE_QUERY_PARAM } from "../Results/constants";
+import { NextRouter } from "next/router";
 
 export const combineAllSearchResults = (
   people?: SearchResult<Person>,
@@ -73,9 +76,9 @@ const defaultSearchPage = 1;
 
 export const usePeople = () => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(SEARCH_QUERY_PARAM);
-  const category = searchParams.get(CATEGORY_QUERY_PARAM);
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const { data: people, isLoading: isLoadingPeople } = useSWQuery<
     SearchResult<Person>
@@ -92,9 +95,9 @@ export const usePeople = () => {
 
 export const usePlanets = () => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(SEARCH_QUERY_PARAM);
-  const category = searchParams.get(CATEGORY_QUERY_PARAM);
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const { data: planets, isLoading: isLoadingPlanets } = useSWQuery<
     SearchResult<Planet>
@@ -111,9 +114,9 @@ export const usePlanets = () => {
 
 export const useStarships = () => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(SEARCH_QUERY_PARAM);
-  const category = searchParams.get(CATEGORY_QUERY_PARAM);
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const { data: starships, isLoading: isLoadingStarships } = useSWQuery<
     SearchResult<Starship>
@@ -130,9 +133,9 @@ export const useStarships = () => {
 
 export const useVehicles = () => {
   const searchParams = useSearchParams()!;
-  const search = searchParams.get(SEARCH_QUERY_PARAM);
-  const category = searchParams.get(CATEGORY_QUERY_PARAM);
-  const isSearchEmpty = search === "";
+  const search = searchParams.get(SEARCH_QUERY_PARAM) ?? DEFAULT_SEARCH;
+  const category = searchParams.get(CATEGORY_QUERY_PARAM) ?? DEFAULT_CATEGORY;
+  const isSearchEmpty = search === DEFAULT_SEARCH;
 
   const { data: vehicles, isLoading: isLoadingVehicles } = useSWQuery<
     SearchResult<Vehicle>
@@ -147,6 +150,11 @@ export const useVehicles = () => {
   return { vehicles, isLoadingVehicles };
 };
 
-export const onDetailsClicked = (searchResult: SearchResultSet) => {
-  alert(`go to ${searchResult.resultType} details page`);
+export const onDetailsClicked = (
+  searchResult: SearchResultSet,
+  router: NextRouter
+) => {
+  const urlArgs = searchResult.url.split("/");
+  const id = urlArgs[urlArgs.length - 2];
+  router.push(`/urlArgs/${id}`);
 };
