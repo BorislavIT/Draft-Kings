@@ -532,8 +532,16 @@ const ResultsContainer: FC = () => {
 
   if (anyErrors) {
     return (
-      <div className="text-red-500 text-3xl text-center">
+      <div className="text-red-500 text-3xl text-center mt-2">
         BIG ERROR, BUT NO DETAILS ;)
+      </div>
+    );
+  }
+
+  if (!isLoading && totalEntities === 0) {
+    return (
+      <div className="text-white text-3xl text-center mt-2">
+        No results found.
       </div>
     );
   }

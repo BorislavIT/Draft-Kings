@@ -1,10 +1,10 @@
 "use client";
-import { Person, Planet } from "@/shared/types";
+import { Person } from "@/shared/types";
 import { FC } from "react";
-import { useSWQuery } from "@/shared/queries";
 import { useRouter } from "next/router";
 import { onDetailsClicked } from "../utils";
 import { SEARCH_CATEGORIES } from "../constants";
+import { usePlanet } from "@/components/Details/utils";
 import yoda from "../../../../public/images/yoda.jpg";
 import Image from "next/image";
 import FilmSearchResult from "../Film/FilmSearchResult";
@@ -22,11 +22,7 @@ const PersonSearchResult: FC<PersonSearchResultProps> = ({
   const homeworldUrlArgs = homeworld.split("/");
   const homeworldId = homeworldUrlArgs[homeworldUrlArgs.length - 2];
 
-  const { data: planet } = useSWQuery<Planet>(
-    ["person planet", homeworldId],
-    `/planets/${homeworldId}`,
-    true
-  );
+  const { planet } = usePlanet(homeworldId, true);
 
   return (
     <li
