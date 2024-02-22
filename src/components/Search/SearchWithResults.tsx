@@ -132,12 +132,14 @@ const SearchWithResults: FC = () => {
 
   const goToSearchResultsPage = () => {
     // this is needed, because of the bad decision to use query params for the search and category, instead of standard
-    // client side state
+    // client side state management
     if (router.pathname === "/results") {
       router.reload();
       return;
     }
-    router.push(`/results?search=${search}&category=${category}`);
+    router.push(
+      `/results?resultsSearch=${search}&resultsCategory=${category}&category=${category}&search=${search}`
+    );
   };
 
   const onSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {

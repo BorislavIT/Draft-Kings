@@ -21,10 +21,6 @@ import StarshipResults from "@/components/Results/Starships/StarshipResults";
 import VehicleResults from "@/components/Results/Vehicles/VehicleResults";
 
 const ResultsPage: FC = () => {
-  const searchParams = useSearchParams()!;
-  const search = searchParams.get("search") ?? "";
-  const category = searchParams.get("category") ?? "";
-
   const [page, setPage] = useQueryState("page", {
     defaultValue: "1",
   });
@@ -51,14 +47,24 @@ const ResultsPage: FC = () => {
   const [currentVehiclesStartIndex, setCurrentVehiclesStartIndex] =
     useState<number>(-1);
 
+  const searchParams = useSearchParams()!;
+  const search = searchParams.get("resultsSearch") ?? "";
+  const isSearchEmpty = search === "";
+
+  const category = searchParams.get("resultsCategory") ?? "";
+  const isCurrentCategoryAll = category === SEARCH_CATEGORIES.All;
+  const isCurrentCategoryPeople = category === SEARCH_CATEGORIES.People;
+  const isCurrentCategoryPlanets = category === SEARCH_CATEGORIES.Planets;
+  const isCurrentCategoryStarships = category === SEARCH_CATEGORIES.Starships;
+  const isCurrentCategoryVehicles = category === SEARCH_CATEGORIES.Vehicles;
+
   const { data: people, isLoading: isLoadingPeople } = useSWQuery<
     SearchResult<Person>
   >(
     ["people", peoplePage],
     `/people?search=${search}&page=${peoplePage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.People) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryPeople) &&
+      !isSearchEmpty &&
       peoplePage > 0,
     {
       refetchOnWindowFocus: false,
@@ -73,9 +79,8 @@ const ResultsPage: FC = () => {
   >(
     ["people", extraPeoplePage],
     `/people?search=${search}&page=${extraPeoplePage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.People) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryPeople) &&
+      !isSearchEmpty &&
       extraPeoplePage > 0,
     {
       refetchOnWindowFocus: false,
@@ -90,9 +95,8 @@ const ResultsPage: FC = () => {
   >(
     ["planet", planetsPage],
     `/planets?search=${search}&page=${planetsPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Planets) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryPlanets) &&
+      !isSearchEmpty &&
       planetsPage > 0,
     {
       refetchOnWindowFocus: false,
@@ -107,9 +111,8 @@ const ResultsPage: FC = () => {
   >(
     ["planet", extraPlanetsPage],
     `/planets?search=${search}&page=${extraPlanetsPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Planets) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryPlanets) &&
+      !isSearchEmpty &&
       extraPlanetsPage > 0,
     {
       refetchOnWindowFocus: false,
@@ -124,9 +127,8 @@ const ResultsPage: FC = () => {
   >(
     ["starship", starshipsPage],
     `/starships?search=${search}&page=${starshipsPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Starships) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryStarships) &&
+      !isSearchEmpty &&
       starshipsPage > 0,
     {
       refetchOnWindowFocus: false,
@@ -140,9 +142,8 @@ const ResultsPage: FC = () => {
     useSWQuery<SearchResult<Starship>>(
       ["starship", extraStarshipsPage],
       `/starships?search=${search}&page=${extraStarshipsPage}`,
-      (category === SEARCH_CATEGORIES.All ||
-        category === SEARCH_CATEGORIES.Starships) &&
-        search !== "" &&
+      (isCurrentCategoryAll || isCurrentCategoryStarships) &&
+        !isSearchEmpty &&
         extraStarshipsPage > 0,
       {
         refetchOnWindowFocus: false,
@@ -157,9 +158,8 @@ const ResultsPage: FC = () => {
   >(
     ["vehicle", vehiclesPage],
     `/vehicles?search=${search}&page=${vehiclesPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Vehicles) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryVehicles) &&
+      !isSearchEmpty &&
       vehiclesPage > 0,
     {
       refetchOnWindowFocus: false,
@@ -174,9 +174,8 @@ const ResultsPage: FC = () => {
   >(
     ["vehicles", extraVehiclesPage],
     `/vehicles?search=${search}&page=${extraVehiclesPage}`,
-    (category === SEARCH_CATEGORIES.All ||
-      category === SEARCH_CATEGORIES.Vehicles) &&
-      search !== "" &&
+    (isCurrentCategoryAll || isCurrentCategoryVehicles) &&
+      !isSearchEmpty &&
       extraVehiclesPage > 0,
     {
       refetchOnWindowFocus: false,
@@ -196,44 +195,44 @@ const ResultsPage: FC = () => {
   >([]);
 
   useEffect(() => {
+    const peopleResultSet: ResultSet<Person> = {
+      resultType: SEARCH_CATEGORIES.People,
+      count: people?.count ?? 0,
+      results: people?.results ?? [],
+    };
+
+    const planetsResultSet: ResultSet<Planet> = {
+      resultType: SEARCH_CATEGORIES.Planets,
+      count: planets?.count ?? 0,
+      results: planets?.results ?? [],
+    };
+
+    const starshipsResultSet: ResultSet<Starship> = {
+      resultType: SEARCH_CATEGORIES.Starships,
+      count: starships?.count ?? 0,
+      results: starships?.results ?? [],
+    };
+
+    const vehiclesResultSet: ResultSet<Vehicle> = {
+      resultType: SEARCH_CATEGORIES.Vehicles,
+      count: vehicles?.count ?? 0,
+      results: vehicles?.results ?? [],
+    };
+
+    const entities = [
+      peopleResultSet,
+      planetsResultSet,
+      starshipsResultSet,
+      vehiclesResultSet,
+    ];
+
     if (
-      category === SEARCH_CATEGORIES.All &&
-      people &&
-      planets &&
-      starships &&
-      vehicles
+      (isCurrentCategoryAll && people && planets && starships && vehicles) ||
+      (isCurrentCategoryPeople && people) ||
+      (isCurrentCategoryPlanets && planets) ||
+      (isCurrentCategoryStarships && starships) ||
+      (isCurrentCategoryVehicles && vehicles)
     ) {
-      const peopleResultSet: ResultSet<Person> = {
-        resultType: SEARCH_CATEGORIES.People,
-        count: people.count ?? 0,
-        results: people.results ?? [],
-      };
-
-      const planetsResultSet: ResultSet<Planet> = {
-        resultType: SEARCH_CATEGORIES.Planets,
-        count: planets.count ?? 0,
-        results: planets.results ?? [],
-      };
-
-      const starshipsResultSet: ResultSet<Starship> = {
-        resultType: SEARCH_CATEGORIES.Starships,
-        count: starships.count ?? 0,
-        results: starships.results ?? [],
-      };
-
-      const vehiclesResultSet: ResultSet<Vehicle> = {
-        resultType: SEARCH_CATEGORIES.Vehicles,
-        count: vehicles.count ?? 0,
-        results: vehicles.results ?? [],
-      };
-
-      const entities = [
-        peopleResultSet,
-        planetsResultSet,
-        starshipsResultSet,
-        vehiclesResultSet,
-      ];
-
       entities.sort((a, b) => b.count - a.count);
 
       const currentPageStartRange =
@@ -489,18 +488,62 @@ const ResultsPage: FC = () => {
   const [totalEntities, setTotalEntities] = useState<number>(0);
 
   useEffect(() => {
+    // all of these checks are important, because we dont want the pagination to update multiple times
+    // it should always stay the same until the user changes the search query and refreshes the page
+    const totalPeople =
+      isCurrentCategoryAll || isCurrentCategoryPeople
+        ? people?.count ?? null
+        : 0;
+
+    const totalPlanets =
+      isCurrentCategoryAll || isCurrentCategoryPlanets
+        ? planets?.count ?? null
+        : 0;
+
+    const totalStarships =
+      isCurrentCategoryAll || isCurrentCategoryStarships
+        ? starships?.count ?? null
+        : 0;
+
+    const totalVehicles =
+      isCurrentCategoryAll || isCurrentCategoryVehicles
+        ? vehicles?.count ?? null
+        : 0;
+
     if (
-      category === SEARCH_CATEGORIES.All &&
-      people &&
-      planets &&
-      starships &&
-      vehicles
+      isCurrentCategoryAll &&
+      totalPeople !== null &&
+      totalPlanets !== null &&
+      totalStarships !== null &&
+      totalVehicles !== null
     ) {
       setTotalEntities(
-        people.count + planets.count + starships.count + vehicles.count
+        totalPeople + totalPlanets + totalStarships + totalVehicles
       );
     }
-  }, [people?.count, planets?.count, starships?.count, vehicles?.count]);
+
+    if (isCurrentCategoryPeople && totalPeople !== null) {
+      setTotalEntities(totalPeople);
+    }
+
+    if (isCurrentCategoryPlanets && totalPlanets !== null) {
+      setTotalEntities(totalPlanets);
+    }
+
+    if (isCurrentCategoryStarships && totalStarships !== null) {
+      setTotalEntities(totalStarships);
+    }
+  }, [
+    people?.count,
+    planets?.count,
+    starships?.count,
+    vehicles?.count,
+    isCurrentCategoryAll,
+    isCurrentCategoryPeople,
+    isCurrentCategoryPlanets,
+    isCurrentCategoryStarships,
+    isCurrentCategoryVehicles,
+  ]);
 
   useEffect(() => {
     if (currentPeopleStartIndex >= 0) {
@@ -551,7 +594,7 @@ const ResultsPage: FC = () => {
 
   const Pagination = () => {
     return (
-      <ul className="pagination flex flex-row flex-nowrap justify-end text-white">
+      <ul className="pagination flex flex-row flex-nowrap justify-end text-white mt-2 h-16">
         {Array.from({
           length: Math.ceil(totalEntities / MAX_RESULTS_PER_PAGE),
         }).map((_, index) => (
@@ -568,48 +611,54 @@ const ResultsPage: FC = () => {
   };
 
   return (
-    <section className="w-full h-full flex flex-col flex-wrap">
+    <section className="w-full h-full">
       <SearchWithResults />
-      {isLoading && (
-        <div className="flex flex-col flex-wrap w-full">
-          <ul className="w-full rounded flex flex-row flex-wrap">
-            <section className="w-full h-full flex flex-col flex-wrap">
-              <div className="flex flex-col flex-wrap w-full mb-2">
-                <ul className="w-full rounded flex flex-row flex-wrap bg-white">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <li className="w-full h-16 bg-gray-200" key={index}></li>
-                  ))}
-                </ul>
-              </div>
-            </section>
-          </ul>
-        </div>
-      )}
-      {!isLoading && (
-        <div className="flex flex-col flex-wrap w-full">
-          <ul className="w-full rounded flex flex-row flex-wrap">
-            {allVisibleEntities.map((resultSet, index) => (
-              <Fragment key={index}>
-                {resultSet.resultType === SEARCH_CATEGORIES.People && (
-                  <PersonResults people={resultSet?.results as Person[]} />
-                )}
-                {resultSet.resultType === SEARCH_CATEGORIES.Planets && (
-                  <PlanetResults planets={resultSet?.results as Planet[]} />
-                )}
-                {resultSet.resultType === SEARCH_CATEGORIES.Starships && (
-                  <StarshipResults
-                    starships={resultSet?.results as Starship[]}
-                  />
-                )}
-                {resultSet.resultType === SEARCH_CATEGORIES.Vehicles && (
-                  <VehicleResults vehicles={resultSet?.results as Vehicle[]} />
-                )}
-              </Fragment>
-            ))}
-          </ul>
-        </div>
-      )}
-      <Pagination />
+      <div className="w-full mt-16 flex flex-row flex-wrap">
+        {isLoading && (
+          <div className="flex flex-col flex-wrap w-full">
+            <ul className="w-full rounded flex flex-row flex-wrap">
+              <section className="w-full h-full flex flex-col flex-wrap">
+                <div className="flex flex-col flex-wrap w-full">
+                  <ul className="w-full rounded flex flex-row flex-wrap bg-white">
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <li className="w-full h-16 bg-gray-200" key={index}></li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            </ul>
+          </div>
+        )}
+        {!isLoading && (
+          <div className="flex flex-col flex-wrap w-full">
+            <ul className="w-full rounded flex flex-row flex-wrap">
+              {allVisibleEntities
+                .slice(0, MAX_RESULTS_PER_PAGE)
+                .map((resultSet, index) => (
+                  <Fragment key={index}>
+                    {resultSet.resultType === SEARCH_CATEGORIES.People && (
+                      <PersonResults people={resultSet?.results as Person[]} />
+                    )}
+                    {resultSet.resultType === SEARCH_CATEGORIES.Planets && (
+                      <PlanetResults planets={resultSet?.results as Planet[]} />
+                    )}
+                    {resultSet.resultType === SEARCH_CATEGORIES.Starships && (
+                      <StarshipResults
+                        starships={resultSet?.results as Starship[]}
+                      />
+                    )}
+                    {resultSet.resultType === SEARCH_CATEGORIES.Vehicles && (
+                      <VehicleResults
+                        vehicles={resultSet?.results as Vehicle[]}
+                      />
+                    )}
+                  </Fragment>
+                ))}
+            </ul>
+          </div>
+        )}
+        <Pagination />
+      </div>
     </section>
   );
 };
