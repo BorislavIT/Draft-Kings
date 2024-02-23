@@ -42,6 +42,7 @@ const DetailedPerson: FC<DetailedPersonProps> = ({
         </div>
         <div className="w-full p-3 flex flex-row flex-nowrap justify-between items-center border-solid border-b border-black">
           <div className="w-full">
+            Movies:&nbsp;
             {films.map((film, index) => (
               <span className="pl-1" key={index}>
                 <FilmSearchResult filmUrl={film} />

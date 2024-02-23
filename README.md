@@ -4,22 +4,24 @@
 - pnpm is used to install and run the project
 
 ```bash
-    # Steps in order to install pnpm if you don't have it
-    # for some god forsaken reason
-    # USE pnpm !!!
-
+    #pnpm
     npm install pnpm -g
-
     pnpm install
-    pnpm dev
+    pnpm start
+
+    # or if you want to build it
+    pnpm build
+    pnpm start:build
 ```
 
 ```bash
-    # Ok some people are weird as hell so here are the instructions
-    # for npm as well
-
+    #npm
     npm install
-    npm run dev
+    npm run start
+
+    # or if you want to build it
+    npm run build
+    npm run start:build
 ```
 
 ## Used packages and why
